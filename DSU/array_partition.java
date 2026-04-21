@@ -1,7 +1,7 @@
 import java.util.*;
 import java.io.*;
 
-public class Main {
+public class array_partition {
 
     private static boolean canSplit(int[] arr, int k, long limit) {
 
