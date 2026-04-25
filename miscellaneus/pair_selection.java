@@ -1,4 +1,4 @@
-public import java.io.*;
+import java.io.*;
 import java.util.*;
 
 public class Main {
@@ -61,6 +61,4 @@ public class Main {
 
         return sum >= 0;
     }
-} {
-    
 }
