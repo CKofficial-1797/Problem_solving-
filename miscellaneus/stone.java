@@ -47,35 +47,57 @@ public class Main {
         FastInput fs = new FastInput(System.in);
 
         int n = fs.nextInt();
+        int k = fs.nextInt();
 
         int[] arr = new int[n];
         for (int i = 0; i < n; i++) {
             arr[i] = fs.nextInt();
         }
 
+        Map<Integer, Integer> freq = new HashMap<>();
+
         int leftIndex = 0;
-        int rightIndex = n - 1;
+        int distinct = 0;
 
-        long leftSum = 0;
-        long rightSum = 0;
+        long windowSum = 0;
+        long bestSum = 0;
 
-        long best = 0;
+        for (int rightIndex = 0; rightIndex < n; rightIndex++) {
 
-        while (leftIndex <= rightIndex) {
+            int val = arr[rightIndex];
 
-            if (leftSum <= rightSum) {
-                leftSum += arr[leftIndex];
-                leftIndex++;
-            } else {
-                rightSum += arr[rightIndex];
-                rightIndex--;
+            windowSum += val;
+
+            int count = freq.getOrDefault(val, 0) + 1;
+            freq.put(val, count);
+
+            if (count == 1) {
+                distinct++;
             }
 
-            if (leftSum == rightSum) {
-                best = leftSum;
+            while (distinct > k) {
+
+                int leftVal = arr[leftIndex];
+
+                windowSum -= leftVal;
+
+                int leftCount = freq.get(leftVal) - 1;
+
+                if (leftCount == 0) {
+                    freq.remove(leftVal);
+                    distinct--;
+                } else {
+                    freq.put(leftVal, leftCount);
+                }
+
+                leftIndex++;
+            }
+
+            if (windowSum > bestSum) {
+                bestSum = windowSum;
             }
         }
 
-        System.out.println(best);
+        System.out.println(bestSum);
     }
 }
