@@ -1,90 +1,114 @@
-import java.io.*;
-import java.util.*;
+import java.io.InputStream;
+import java.io.IOException;
+import java.util.Arrays;
 
 public class Main {
+    static class FastScanner {
+        private InputStream stream;
+        private byte[] buf = new byte[1 << 16];
+        private int head, tail;
 
-    private static class Result {
-        long bonus;
-        int[] order;
-
-        Result(long b, int[] o) {
-            bonus = b;
-            order = o;
+        public FastScanner(InputStream stream) {
+            this.stream = stream;
         }
-    }
 
-    private static Result solveCase(int[] arr, int X) {
-
-        Arrays.sort(arr);
-        reverse(arr);
-
-        long sum = 0;
-        long total = 0;
-
-        for (int p : arr) {
-
-            long oldLevel = sum / X;
-
-            sum += p;
-
-            long newLevel = sum / X;
-
-            if (newLevel > oldLevel) {
-                total += p;
+        private int read() throws IOException {
+            if (head >= tail) {
+                head = 0;
+                tail = stream.read(buf, 0, buf.length);
+                if (tail <= 0) {
+                    return -1;
+                }
             }
+            return buf[head++];
         }
 
-        return new Result(total, arr);
-    }
+        public int nextInt() throws IOException {
+            int c = read();
+            while (c <= 32) {
+                if (c == -1) {
+                    return -1;
+                }
+                c = read();
+            }
+            int res = 0;
+            while (c > 32) {
+                res = res * 10 + c - '0';
+                c = read();
+            }
+            return res;
+        }
 
-    private static void reverse(int[] a) {
-
-        int li = 0;
-        int ri = a.length - 1;
-
-        while (li < ri) {
-            int t = a[li];
-            a[li] = a[ri];
-            a[ri] = t;
-            li++;
-            ri--;
+        public long nextLong() throws IOException {
+            int c = read();
+            while (c <= 32) {
+                if (c == -1) {
+                    return -1;
+                }
+                c = read();
+            }
+            long res = 0;
+            while (c > 32) {
+                res = res * 10 + c - '0';
+                c = read();
+            }
+            return res;
         }
     }
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) throws IOException {
+        FastScanner fs = new FastScanner(System.in);
+        int t = fs.nextInt();
+        if (t == -1) return;
 
-        BufferedReader br =
-                new BufferedReader(new InputStreamReader(System.in));
-
-        int t = Integer.parseInt(br.readLine().trim());
+        StringBuilder sb = new StringBuilder();
 
         while (t-- > 0) {
+            int n = fs.nextInt();
+            long x = fs.nextLong();
 
-            StringTokenizer st =
-                    new StringTokenizer(br.readLine());
+            int[] a = new int[n];
+            long totSum = 0;
+            
+            for (int i = 0; i < n; i++) {
+                a[i] = fs.nextInt();
+                totSum += a[i];
+            }
 
-            int n = Integer.parseInt(st.nextToken());
-            int X = Integer.parseInt(st.nextToken());
+            Arrays.sort(a);
 
-            int[] arr = new int[n];
+            int k = (int) (totSum / x);
+            int ps = n - k - 1;
+            int pl = n - 1;
 
-            st = new StringTokenizer(br.readLine());
+            long curSum = 0;
+            long bonus = 0;
+            int[] res = new int[n];
 
             for (int i = 0; i < n; i++) {
-                arr[i] = Integer.parseInt(st.nextToken());
+                long rem = x - (curSum % x);
+                if (pl >= n - k && a[pl] >= rem) {
+                    res[i] = a[pl];
+                    bonus += a[pl];
+                    curSum += a[pl];
+                    pl--;
+                } else {
+                    res[i] = a[ps];
+                    curSum += a[ps];
+                    ps--;
+                }
             }
 
-            Result res = solveCase(arr, X);
-
-            System.out.println(res.bonus);
-
-            StringBuilder sb = new StringBuilder();
-
-            for (int v : res.order) {
-                sb.append(v).append(' ');
+            sb.append(bonus).append('\n');
+            for (int i = 0; i < n; i++) {
+                sb.append(res[i]);
+                if (i < n - 1) {
+                    sb.append(' ');
+                }
             }
-
-            System.out.println(sb.toString().trim());
+            sb.append('\n');
         }
+        
+        System.out.print(sb.toString());
     }
 }
