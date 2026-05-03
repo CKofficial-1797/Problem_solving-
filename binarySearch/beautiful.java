@@ -1,64 +1,90 @@
-import java.io.*;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.StringTokenizer;
 
 public class Main {
+    static class FastReader {
+        BufferedReader br;
+        StringTokenizer st;
 
-    static class FastScanner {
-        private final InputStream in = System.in;
-        private final byte[] buf = new byte[1 << 16];
-        private int ptr = 0, size = 0;
-
-        private int read() throws IOException {
-            if (ptr >= size) {
-                size = in.read(buf);
-                ptr = 0;
-                if (size <= 0) return -1;
-            }
-            return buf[ptr++];
+        public FastReader() {
+            br = new BufferedReader(new InputStreamReader(System.in));
         }
 
-        int nextInt() throws IOException {
-            int c = read();
-            while (c <= 32) c = read();
-
-            int sign = 1;
-            if (c == '-') {
-                sign = -1;
-                c = read();
+        String next() {
+            while (st == null || !st.hasMoreElements()) {
+                try {
+                    String s = br.readLine();
+                    if (s == null) return null;
+                    st = new StringTokenizer(s);
+                } catch (IOException e) {
+                    return null;
+                }
             }
+            return st.nextToken();
+        }
 
-            int val = 0;
-            while (c > 32) {
-                val = val * 10 + c - '0';
-                c = read();
-            }
+        int nextInt() {
+            return Integer.parseInt(next());
+        }
 
-            return val * sign;
+        long nextLong() {
+            return Long.parseLong(next());
         }
     }
 
-    public static void main(String[] args) throws Exception {
-        FastScanner fs = new FastScanner();
-        StringBuilder out = new StringBuilder();
-
-        int t = fs.nextInt();
+    public static void main(String[] args) {
+        FastReader in = new FastReader();
+        String tStr = in.next();
+        if (tStr == null) return;
+        int t = Integer.parseInt(tStr);
 
         while (t-- > 0) {
-            int n = fs.nextInt();
+            int n = in.nextInt();
+            long os = (long) n * (n + 1) / 2;
+            
+            System.out.println("2 1 " + n);
+            System.out.flush();
+            long ms = in.nextLong();
+            long k = ms - os;
 
-            for (int i = 0; i < n; i++) {
-                fs.nextInt();
+            int li = 1;
+            int rb = n;
+            int fl = -1;
+            int fr = -1;
+
+            while (li <= rb) {
+                int m = li + (rb - li) / 2;
+
+                System.out.println("1 1 " + m);
+                System.out.flush();
+                long s1 = in.nextLong();
+
+                System.out.println("2 1 " + m);
+                System.out.flush();
+                long s2 = in.nextLong();
+
+                long sx = s2 - s1;
+
+                if (sx == 0) {
+                    li = m + 1;
+                } else if (sx == k) {
+                    fr = m;
+                    rb = m - 1;
+                } else {
+                    fl = (int) (m - sx + 1);
+                    fr = (int) (fl + k - 1);
+                    break;
+                }
             }
 
-            int leftIndex = fs.nextInt();
-            int rightBound = fs.nextInt();
+            if (fl == -1) {
+                fl = (int) (fr - k + 1);
+            }
 
-            out.append(leftIndex)
-               .append(' ')
-               .append(rightBound)
-               .append('\n');
+            System.out.println("! " + fl + " " + fr);
+            System.out.flush();
         }
-
-        System.out.print(out);
     }
 }
